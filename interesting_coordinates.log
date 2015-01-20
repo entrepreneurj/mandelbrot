@@ -1,0 +1,13 @@
+Here's a list of a few interesting configurations I've picked out
+The corresponding files may not be available in the repository
+
+./generate -i 10000 -d 500 -c -- 0.432539867562512 0.226118675951818 0.0000000000000182 See Mandelbrot.150119.232524.1000.500.png
+./generate -i 500 -d 4000 -c -- -0.235125 0.827215 0.00004 See Mandelbrot.150119.232941.8000.4000.png
+
+Some of the other commands I have tried (and haven't matched up to the relevent pictures yet)
+
+./generate -i 2000 -d 1000 -c -- -0.16070135 1.0375665 0.0000001
+./generate -i 100 -d 4000 -c -- -1.25066 0.02012 0.00017 See http://mandelbrot.letts.me/mandelbrot/Mandelbrot.150119.225701.8000.4000.png
+./generate -i 10 -d 5000 -c -- 0 0 1.2 -- Low iteration image of the entire Mandelbrot set. Fantasic array of color banding.
+./generate -c -- -1.99999999913827011 1.3148954435076375751 2.438973985836665
+
