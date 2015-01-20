@@ -1,0 +1,181 @@
+#!/usr/bin/env python
+
+from datetime import datetime
+import sys
+import getopt
+
+from numpy import *
+import numpy as np
+from PIL import Image
+
+
+WHITE = 255.0
+BLACK = 0.0
+
+
+def usage():
+    print "\nThis is the usage function\n"
+    print 'Usage with centered coordinates: '+sys.argv[0]+' -i 128 -d 5000 -c -- x y r'
+    print 'Usage with corner coordinates: '+sys.argv[0]+' -i 128 -d 5000 -b -- xmin xmax ymin ymax'
+    print 'Note: You must enter -- before your coordinate arguments if one of \
+    them contains a minus sign. This allows the argument to pass through\n'
+    print 'Options'
+    print '   -i Set number of iterations [default -i 128]'
+    print '   -d Set number of x pixels [default -d 5000]'
+    print '   -c Use centered coordinates x y r'
+    print '   -b Use corner coordinates xmin xmax ymin ymax'
+
+
+def setUpCentered(coords, dpi):
+
+    dpiy = dpi
+    dpix = 2* dpiy
+    
+    print "Print Mandelbrot set at {0}*{1}".format(str(dpix),str(dpiy))
+    x_c = coords[0]
+    y_c = coords[1]
+    r = coords[2]
+    
+    y = linspace(y_c+r, y_c-r, dpiy)
+    x = linspace(x_c-r-r,x_c+r+r,dpix)
+    
+    return (x,y)
+
+# TODO
+def SetUpBox(coords, dpi):
+    print '*** Whoops, this option is not supported yet :('
+    usage()
+    sys.exit(2)
+    
+def main(argv):
+
+    # Defaults
+    ## Low number of iterations means higher dynamic range        
+    iters = 128
+    x = None
+    y = None
+    dpi = 5000
+    is_centered = False
+    is_box = False
+    num_args_should_be = None
+    
+    # Try to get commandline args
+    try:
+        opts, args = getopt.getopt(argv, "hi:d:cb", ["help"])
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            usage()
+            sys.exit()
+
+        elif opt in "-i":
+            iters = int(arg)
+
+        elif opt == "-c":
+            is_centered = True
+            num_args_should_be = 3
+
+        elif opt == "-b":
+            is_box = True
+            num_args_should_be = 4
+        
+        elif opt == "-d":
+            dpi = int(arg)
+
+    # Sanity check: Make sure only one coordinate option was chosen
+    if is_centered == is_box:
+        if is_box == False:
+            print '*** Please choose at least one coordinate option'
+            usage()
+            sys.exit(2)
+
+        else:
+            print '*** Please only choose one coordinate option'
+            usage()
+            sys.exit(2)
+
+    # Second sanity check: Make sure user supplied correct number of args
+        if len(args) != num_args_should_be:
+            print '*** Please choose at correct number of arguments for \
+            your chosen option'
+            usage()
+            sys.exit(2)
+
+    # if we've made it this far we're good to go!
+
+    # convert args to integers
+    args = [float(a) for a in args]
+
+    if is_centered:
+        x, y = setUpCentered(args, dpi)
+    else:
+        x, y = setUpBox(args, dpi)
+
+    generate(x,y,iters)
+    
+
+def generate(x,y, iters):
+    """ Function that generates set based on inputs """
+    xv, yv = meshgrid(x,y)
+
+    # Turn coordinates into one array of complex numbers
+    z = xv + yv*1j
+
+    # Set value of c to initial value of complex numbers
+    # We are trying to find c_n < 2 as members of M(andelbrot Set)
+    c = z
+
+    # Counter matrix - keeps track of how many iterations it takes before a
+    # point leaves the Mandelbrot set 
+    counter = zeros(c.shape)
+    zero = zeros(c.shape)
+    ident = ones(c.shape)
+
+    # Premature optimisation 
+    f_iters = float(iters)
+
+    for i in range(iters):
+        sys.stdout.write(str((float(i)/f_iters)*100)+"%    ")
+
+        # Do calculation
+        z = multiply(z,z) + c
+
+        # Find all values with a abs value greater than 2
+        filter = abs(z) > 2
+
+        # Add set the current iteration as their value in counter matrix
+        # i.e. record the iteration during which they escaped.
+        counter = where(filter, i*ident, counter) 
+
+        # TODO: Set values of escaped points to 0 in z and c
+        
+        z = where(filter, zero, z)
+        c = where(filter, zero, c)
+        
+
+    # Scale the counter matrix to the maximum colour value (e.g. WHITE)
+    max_val = amax(counter)
+    counter = (counter/max_val)*WHITE
+
+    # Save array to file first
+    # Saves any nasty surprises
+    fname = "{0}.{1}.{2}.npy".format(str(len(x)), str(len(y)),
+            datetime.now().strftime("%y%m%d.%H%M%S"))
+    f = open(fname, 'wb')
+    np.save(f, counter)
+    f.close()
+
+    # Save as picture :)
+    im = Image.fromarray(counter)
+    im = im.convert('L')
+    im.save("Mandelbrot.{0}.{1}.{2}.png".format(datetime.now().strftime("%y%m%d.%H%M%S"),str(len(x)),
+        str(len(y))))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+
+
