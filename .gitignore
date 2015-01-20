@@ -1,3 +1,5 @@
 *.pyc
 .env
 previous_versions
+*.png
+*.npy
