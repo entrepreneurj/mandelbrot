@@ -61,8 +61,7 @@ im = Image.fromarray(counter)
 im = im.convert('RGB')
 im.save("Mandelbrot.png")
 
-fname = "{0}.{1}.{2}.npy".format(str(dpix), str(dpiy),
-        datetime.now().strftime("%d%m%y.%H%M%S"))
-f = open(fname)
+fname = "{0}.{1}.{2}.npy".format(str(dpix), str(dpiy), datetime.now().strftime("%d%m%y.%H%M%S"))
+f = open(fname, 'wb')
 np.save(f, counter)
 f.close()
