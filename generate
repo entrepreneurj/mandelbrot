@@ -114,8 +114,14 @@ def main(argv):
     else:
         x, y = setUpBox(args, dpi)
 
-    generate(x,y,iters)
+    dimx, dimy, timestamp = generate(x,y,iters)
     
+    # log print order to file
+    f = open('mandelbrot.log', 'a')
+    f.write("Printed {0} x {1} Fractal image named {2} \
+            at coordinates {3} after {4} iterations".format(dimx, dimy,
+            timestamp, args, iters))   
+    f.close()
 
 def generate(x,y, iters):
     """ Function that generates set based on inputs """
@@ -174,6 +180,8 @@ def generate(x,y, iters):
     im = im.convert('L')
     im.save("Mandelbrot.{0}.{1}.{2}.png".format(timestamp,str(len(x)),str(len(y))))
     print "File saved as "+"Mandelbrot.{0}.{1}.{2}.png".format(timestamp,str(len(x)),str(len(y)))
+
+    return (str(len(x)), str(len(y)), timestamp)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
