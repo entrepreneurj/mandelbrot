@@ -162,8 +162,9 @@ def generate(x,y, iters):
 
     # Save array to file first
     # Saves any nasty surprises
-    fname = "{0}.{1}.{2}.npy".format(str(len(x)), str(len(y)),
-            datetime.now().strftime("%y%m%d.%H%M%S"))
+    
+    timestamp = datetime.now().strftime("%y%m%d.%H%M%S")
+    fname = "{0}.{1}.{2}.npy".format(str(len(x)), str(len(y)), timestamp)
     f = open(fname, 'wb')
     np.save(f, counter)
     f.close()
@@ -171,9 +172,8 @@ def generate(x,y, iters):
     # Save as picture :)
     im = Image.fromarray(counter)
     im = im.convert('L')
-    im.save("Mandelbrot.{0}.{1}.{2}.png".format(datetime.now().strftime("%y%m%d.%H%M%S"),str(len(x)),
-        str(len(y))))
-
+    im.save("Mandelbrot.{0}.{1}.{2}.png".format(timestamp,str(len(x)),str(len(y))))
+    print "File saved as "+"Mandelbrot.{0}.{1}.{2}.png".format(timestamp,str(len(x)),str(len(y)))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
