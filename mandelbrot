@@ -21,7 +21,7 @@ def usage():
     them contains a minus sign. This allows the argument to pass through\n'
     print 'Options'
     print '   -i Set number of iterations [default -i 128]'
-    print '   -d Set number of x pixels [default -d 5000]'
+    print '   -d Set number of y pixels [default -d 5000]'
     print '   -c Use centered coordinates x y r'
     print '   -b Use corner coordinates xmin xmax ymin ymax'
 
