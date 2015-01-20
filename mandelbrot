@@ -55,7 +55,7 @@ def main(argv):
     x = None
     y = None
     dpi = 5000
-    is_centered = False
+    is_centered = True
     is_box = False
     num_args_should_be = None
     
@@ -80,6 +80,7 @@ def main(argv):
 
         elif opt == "-b":
             is_box = True
+            is_centered = False
             num_args_should_be = 4
         
         elif opt == "-d":
